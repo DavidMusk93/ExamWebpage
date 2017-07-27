@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>题库管理</title>
+    <link rel="stylesheet" href="dist/css/bootstrap.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="dist/js/angular.min.js"></script>
+    <script src="dist/js/jquery-3.2.1.min.js"></script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <style>
+        /*set height of the grid so .sidenav can be 100% (adjust if needed)*/
+        .row.content {height: 1000px}
+
+        /*set blue background color and 100% height*/
+        .sidenav {
+            background-color: #67B8DE;
+            height:100%;
+        }
+
+        /*on small screens, set height to 'auto' for sidenav and grid*/
+        @media screen and (max-width: 767px) {
+            .sidenav {
+                height: auto;
+                padding: 15px;
+            }
+            .row.content {height: auto;}
+        }
+        /*a hard shift in color halfway through the button*/
+        .btn-info.gradient {
+            background: -moz-linear-gradient(top,  #abd8ed 50%, #67b8de 50%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#abd8ed), color-stop(50%,#67b8de)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  #abd8ed 50%,#67b8de 50%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  #abd8ed 50%,#67b8de 50%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  #abd8ed 50%,#67b8de 50%); /* IE10+ */
+            background: linear-gradient(to bottom,  #abd8ed 50%,#67b8de 50%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#abd8ed', endColorstr='#67b8de',GradientType=0 ); /* IE6-9 */
+        }
+        /*lighten the buttons when hovering over them*/
+        .btn-info.gradient:hover, .btn-info.gradient:focus, .btn-info.gradient:active, .btn-info.gradient.active, .open > .dropdown-toggle.btn-info {
+            background: -moz-linear-gradient(top,  #66b2cc 50%, #33a6cc 50%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#66b2cc), color-stop(50%,#33a6cc)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  #66b2cc 50%,#33a6cc 50%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  #66b2cc 50%,#33a6cc 50%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  #66b2cc 50%,#33a6cc 50%); /* IE10+ */
+            background: linear-gradient(to bottom,  #66b2cc 50%,#33a6cc 50%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66b2cc', endColorstr='#33a6cc',GradientType=0 ); /* IE6-9 */
+        }
+        /*darker the buttons when they're active / clicked*/
+        .btn-info.gradient:active, .btn-info.gradient.active {
+            background: -moz-linear-gradient(top,  #267c99 50%, #007299 50%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#267c99), color-stop(50%,#007299)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  #267c99 50%,#007299 50%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  #267c99 50%,#007299 50%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  #267c99 50%,#007299 50%); /* IE10+ */
+            background: linear-gradient(to bottom,  #267c99 50%,#007299 50%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#267c99', endColorstr='#007299',GradientType=0 ); /* IE6-9 */
+        }
+
+        /*a reverse gradient, thanks to https://bootstrapbay.com/blog/bootstrap-button-styles/*/
+        .btn-info.gradientR {
+            background: -moz-linear-gradient(top,  #67b8de 50%, #abd8ed 50%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#67b8de), color-stop(50%,#abd8ed)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  #67b8de 50%,#abd8ed 50%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  #67b8de 50%,#abd8ed 50%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  #67b8de 50%,#abd8ed 50%); /* IE10+ */
+            background: linear-gradient(to bottom,  #67b8de 50%,#abd8ed 50%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#67b8de', endColorstr='#abd8ed',GradientType=0 ); /* IE6-9 */
+        }
+        /*lighten the buttons when hovering over them*/
+        .btn-info.gradientR:hover, .btn-info.gradientR:focus, .btn-info.gradientR:active, .btn-info.gradientR.active, .open > .dropdown-toggle.btn-info {
+            background: -moz-linear-gradient(top,  #33a6cc 50%, #66b2cc 50%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#33a6cc), color-stop(50%,#66b2cc)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  #33a6cc 50%,#66b2cc 50%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  #33a6cc 50%,#66b2cc 50%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  #33a6cc 50%,#66b2cc 50%); /* IE10+ */
+            background: linear-gradient(to bottom,  #33a6cc 50%,#66b2cc 50%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#33a6cc', endColorstr='#66b2cc',GradientType=0 ); /* IE6-9 */
+        }
+        /*darker the buttons when they're active / clicked*/
+        .btn-info.gradientR:active, .btn-info.gradientR.active {
+            background: -moz-linear-gradient(top,  #007299 50%, #267c99 50%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#007299), color-stop(50%,#267c99)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  #007299 50%,#267c99 50%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  #007299 50%,#267c99 50%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  #007299 50%,#267c99 50%); /* IE10+ */
+            background: linear-gradient(to bottom,  #007299 50%,#267c99 50%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#007299', endColorstr='#267c99',GradientType=0 ); /* IE6-9 */
+        }
+
+        .btn-info.raised {
+            box-shadow: 0 3px 0 0 #007299;
+        }
+
+        .btn-info.raised:active, .btn-info.raised.active {
+            background: #33a6cc;
+            box-shadow: none;
+            margin-bottom: -3px;
+            margin-top: 3px;
+        }
+
+        .btn {
+            text-align: left;
+            white-space: normal !important;
+        }
+
+        #loading {
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid text-center">
+    <div class="row content">
+        <div class="col-sm-3 sidenav">
+            <h1 style="padding: 32px 0px; color: white">使用说明</h1>
+            <hr />
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="accordion" href="#collapse1">查看全部</a>
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse in">
+                        <div class="panel-body text-left">
+                            选中<code>题库</code>标签页，通过<kbd>Ctrl + f</kbd>来检索并查看题库中的题。
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="accordion" href="#collapse2">修改题目</a>
+                        </h4>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse in">
+                        <div class="panel-body text-left">
+                            选中<code>修改</code>标签页，在<mark>搜索框</mark>中输入要修改的<mark>题目名称</mark>。
+                            如果题库中包含所检索的题目，则页面会展示该题。可修改的项包含：<mark>题头</mark>、<mark>各个选项值</mark>、
+                            <mark>正确选项</mark>、<mark>是否为必答题</mark>。最后管理人员确任各选项无误，提交修改结果。
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="accordion" href="#collapse3">增添新题</a>
+                        </h4>
+                    </div>
+                    <div id="collapse3" class="panel-collapse collapse in">
+                        <div class="panel-body text-left">
+                            选中<code>增添</code>标签页，页面展示一道
+                            <a href="#" id="popover1" title="名词解释" data-toggle="popover" data-placement="top" data-content="不包含任何内容，仅提供添加选项。">空题</a>。
+                            可添加的项包含：<mark>题头</mark>、<mark>各个选项值</mark>、
+                            <mark>正确选项</mark>、<mark>是否为必答题</mark>。最后管理人员确认各选项无误，提交增添题目。
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="accordion" href="#collapse4">
+                                <p style="margin: 0px;" data-toggle="tooltip" title="Just click me!">删除旧题</p>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse">
+                        <div class="panel-body text-left">
+                            选中<code>删除</code>标签页，在<mark>搜索框</mark>中输入要删除的<mark>题目名称</mark>。
+                            如果题库中包含所检索的题目，则页面会展示该题。<mark>题头</mark>、<mark>各个选项值</mark>、
+                            <mark>正确选项</mark>、<mark>是否为必答题</mark>这五个选项无法修改。最后管理人员确保选项无误，删除该题。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="jumbotron">
+                        <h1 style="margin: 30px 0px">题库管理</h1>
+                        <p id="pageInfo">实现了<mark>增删改查</mark>的基础功能，<mark>轻量化</mark>管理，其<mark>管理体验</mark>与<mark>入馆考试</mark>具有较强的<code>一致性</code>。</p>
+                    </div>
+                    <hr />
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#allQuestions">题库</a></li>
+                        <li><a data-toggle="tab" href="#updateQuestion">修改</a></li>
+                        <li><a data-toggle="tab" href="#insertQuestion">增添</a></li>
+                        <li><a data-toggle="tab" href="#deleteQuestion">删除</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="allQuestions" class="tab-pane fade in active">
+                            <div ng-app="showAllQuestions" ng-controller="allQuestionsCtrl" class="panel-group">
+                                <div class="panel panel-info" ng-repeat="x in allQuestions">
+                                    <div class="panel-heading" style="text-align: left">{{x.id}}.{{x.header}}</div>
+                                    <div class="panel-body">
+                                        <div data-toggle="buttons">
+                                            <span id="showSelectA-{{x.id}}" class="btn btn-default btn-block" ng-class="{true: 'active', false:'inactive'} [x.activeAnswer[0]]">
+                                                <input type="radio" name="select1" value="A">A {{x.opts.split('|')[0]}}
+                                            </span>
+                                            <span id="showSelectB-{{x.id}}" class="btn btn-default btn-block" ng-class="{true: 'active', false:'inactive'} [x.activeAnswer[1]]">
+                                                <input type="radio" name="select1" value="B">B {{x.opts.split('|')[1]}}
+                                            </span>
+                                            <span id="showSelectC-{{x.id}}" class="btn btn-default btn-block" ng-class="{true: 'active', false:'inactive'} [x.activeAnswer[2]]">
+                                                <input type="radio" name="select1" value="C">C {{x.opts.split('|')[2]}}
+                                            </span>
+                                            <span id="showSelectD-{{x.id}}" class="btn btn-default btn-block" ng-class="{true: 'active', false:'inactive'} [x.activeAnswer[3]]">
+                                                <input type="radio" name="select1" value="D">D {{x.opts.split('|')[3]}}
+                                            </span>
+                                        </div>
+                                        <div class="input-group" style="margin-top: 5px">
+                                            <span class="input-group-addon" style="background-color: #d6cfd5">是否必答</span>
+                                            <div class="btn-group-justified" data-toggle="buttons">
+                                                <label class="btn btn-default btn-block" ng-class="{true: 'active', false:'inactive'} [x.activeIsRequired[0]]" style="text-align: center">
+                                                    <input type="radio" name="isRequired" value="Y">是
+                                                </label>
+                                                <label class="btn btn-default btn-block" ng-class="{true: 'active', false:'inactive'} [x.activeIsRequired[1]]" style="text-align: center">
+                                                    <input type="radio" name="isRequired" value="N">否
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                var app = angular.module('showAllQuestions', []);
+                                app.controller('allQuestionsCtrl', function ($scope, $http) {
+                                    $http.get('getAllQuestions.php').then(function (response) {
+                                        $scope.allQuestions = response.data;
+                                    });
+                                });
+                            </script>
+                        </div>
+
+                        <div id="updateQuestion" class="tab-pane fade">
+                            <div class="has-success has-feedback">
+                                <input type="text" class="form-control" placeholder="请输入要修改题目的名称..." onkeyup="showResults(this.value)">
+                            </div>
+                            <div class="btn-group-vertical" id="updateLiveSearch" style="width: 100%"></div>
+                            <div id="paddingValues" class="well" style="display: none">test</div>
+
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="input-group">  <!--get input value $('#id').val()-->
+                                        <span class="input-group-addon">题目</span>  <!--在录入数据库中需要检查是否以"?"结尾-->
+                                        <input id="uHeader" type="text" class="form-control" name="updateHeader" placeholder="请在此输入题目，并以问号结尾">
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">A</span>
+                                        <input id="uA" type="text" class="form-control" name="selector" placeholder="请输入选项A，无需以句号结尾">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">B</span>
+                                        <input id="uB" type="text" class="form-control" name="selector" placeholder="请输入选项B，无需以句号结尾">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">C</span>
+                                        <input id="uC" type="text" class="form-control" name="selector" placeholder="请输入选项C，无需以句号结尾">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">D</span>
+                                        <input id="uD" type="text" class="form-control" name="selector" placeholder="请输入选项D，无需以句号结尾">
+                                    </div>
+
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">正确选项</span>
+                                        <div class="btn-group-justified" data-toggle="buttons" id="uAnswer">
+                                            <label id="uButtonA" class="btn btn-info gradient btn-block" style="text-align: center">
+                                                <input type="radio" name="uSelector" value="A">A
+                                            </label>
+                                            <label id="uButtonB" class="btn btn-info gradientR btn-block" style="text-align: center">
+                                                <input type="radio" name="uSelector" value="B">B
+                                            </label>
+                                            <label id="uButtonC" class="btn btn-info gradient btn-block" style="text-align: center">
+                                                <input type="radio" name="uSelector" value="C">C
+                                            </label>
+                                            <label id="uButtonD" class="btn btn-info gradientR btn-block" style="text-align: center">
+                                                <input type="radio" name="uSelector" value="D">D
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group">  <!--get radio value $('input[name=name_of_your_radiobutton]:checked').val();-->
+                                        <span class="input-group-addon">是否必答</span>
+                                        <div class="btn-group-justified" data-toggle="buttons" id="uRequire">
+                                            <label id="uButtonY" class="btn btn-info gradient btn-block" style="text-align: center">
+                                                <input type="radio" name="uIsRequired" value="Y">是
+                                            </label>
+                                            <label id="uButtonN" class="btn btn-info gradient btn-block" style="text-align: center">
+                                                <input type="radio" name="uIsRequired" value="N">否
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="well" style="display: none" id="toBeUpdatedID"></div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button id="uSubmit" class="btn btn-info raised btn-lg"
+                                        style="text-align: center; margin-bottom: 32px; width: 30%" onclick="submitUpdateQuestion(this.id)">提交</button>
+                            </div>
+                        </div>
+
+                        <div id="insertQuestion" class="tab-pane fade">
+                            <div class="panel panel-default" style="">
+                                <div class="panel-heading">
+                                    <div class="input-group">  <!--get input value $('#id').val()-->
+                                        <span class="input-group-addon">题目</span>  <!--在录入数据库中需要检查是否以"?"结尾-->
+                                        <input id="iHeader" type="text" class="form-control" name="insertHeader" placeholder="请在此输入题目，并以问号结尾">
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">A</span>
+                                        <input id="iA" type="text" class="form-control" name="selectorA" placeholder="请输入选项A，无需以句号结尾">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">B</span>
+                                        <input id="iB" type="text" class="form-control" name="selectorA" placeholder="请输入选项B，无需以句号结尾">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">C</span>
+                                        <input id="iC" type="text" class="form-control" name="selectorA" placeholder="请输入选项C，无需以句号结尾">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">D</span>
+                                        <input id="iD" type="text" class="form-control" name="selectorA" placeholder="请输入选项D，无需以句号结尾">
+                                    </div>
+
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">正确选项</span>
+                                        <div class="btn-group-justified" data-toggle="buttons" id="iAnswer">
+                                            <label class="btn btn-info gradient btn-block" style="text-align: center">
+                                                <input type="radio" name="iSelector" value="A">A
+                                            </label>
+                                            <label class="btn btn-info gradientR btn-block" style="text-align: center">
+                                                <input type="radio" name="iSelector" value="B">B
+                                            </label>
+                                            <label class="btn btn-info gradient btn-block" style="text-align: center">
+                                                <input type="radio" name="iSelector" value="C">C
+                                            </label>
+                                            <label class="btn btn-info gradientR btn-block" style="text-align: center">
+                                                <input type="radio" name="iSelector" value="D">D
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group">  <!--get radio value $('input[name=name_of_your_radiobutton]:checked').val();-->
+                                        <span class="input-group-addon">是否必答</span>
+                                        <div class="btn-group-justified" data-toggle="buttons" id="iRequire">
+                                            <label class="btn btn-info gradient btn-block" style="text-align: center">
+                                                <input type="radio" name="iIsRequired" value="Y">是
+                                            </label>
+                                            <label class="btn btn-info gradient btn-block active" style="text-align: center">
+                                                <input type="radio" name="iIsRequired" value="N" checked="">否
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button id="iSubmit" class="btn btn-info raised btn-lg"
+                                        style="text-align: center; margin-bottom: 32px; width: 30%" onclick="submitInsertQuestion(this.id)">提交</button>
+                            </div>
+                        </div>
+
+                        <div id="deleteQuestion" class="tab-pane fade">
+                            <div class="has-warning has-feedback">
+                                <input type="text" class="form-control" placeholder="请输入要删除题目的名称..." onkeyup="showDeleteResults(this.value)">
+                            </div>
+                            <div class="btn-group-vertical" id="deleteLiveSearch" style="width: 100%"></div>
+
+
+                            <div class="panel panel-warning">
+                                <div class="panel-heading">
+                                    <div class="input-group">  <!--get input value $('#id').val()-->
+                                        <span class="input-group-addon">题目</span>  <!--在录入数据库中需要检查是否以"?"结尾-->
+                                        <input id="dHeader" type="text" class="form-control" name="updateHeader" placeholder="" disabled>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">A</span>
+                                        <input id="dA" type="text" class="form-control" name="selector" placeholder="" disabled>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">B</span>
+                                        <input id="dB" type="text" class="form-control" name="selector" placeholder="" disabled>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">C</span>
+                                        <input id="dC" type="text" class="form-control" name="selector" placeholder="" disabled>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">D</span>
+                                        <input id="dD" type="text" class="form-control" name="selector" placeholder="" disabled>
+                                    </div>
+
+                                    <div class="input-group" style="margin-bottom: 5px">
+                                        <span class="input-group-addon">正确选项</span>
+                                        <div class="btn-group-justified" data-toggle="buttons" id="dAnswer">
+                                            <label id="dButtonA" class="btn btn-warning btn-block" style="text-align: center">
+                                                <input type="radio" name="dSelector" value="A">A
+                                            </label>
+                                            <label id="dButtonB" class="btn btn-warning btn-block" style="text-align: center">
+                                                <input type="radio" name="dSelector" value="B">B
+                                            </label>
+                                            <label id="dButtonC" class="btn btn-warning btn-block" style="text-align: center">
+                                                <input type="radio" name="dSelector" value="C">C
+                                            </label>
+                                            <label id="dButtonD" class="btn btn-warning btn-block" style="text-align: center">
+                                                <input type="radio" name="dSelector" value="D">D
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group">  <!--get radio value $('input[name=name_of_your_radiobutton]:checked').val();-->
+                                        <span class="input-group-addon">是否必答</span>
+                                        <div class="btn-group-justified" data-toggle="buttons" id="dRequire">
+                                            <label id="dButtonY" class="btn btn-warning btn-block" style="text-align: center">
+                                                <input type="radio" name="uIsRequired" value="Y">是
+                                            </label>
+                                            <label id="dButtonN" class="btn btn-warning btn-block" style="text-align: center">
+                                                <input type="radio" name="uIsRequired" value="N">否
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="well" style="display: none" id="toBeDeletedID"></div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button id="dSubmit" class="btn btn-warning btn-lg"
+                                        style="text-align: center; margin-bottom: 32px; width: 30%;" onclick="submitDeleteQuestion()">提交</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div id="gotop"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/submitUpdateQuestion.js"></script>
+<script src="js/submitDeleteQuestion.js"></script>
+<script src="autoPadding.js"></script>
+<script src="showDeleteResults.js"></script>
+<script src="showResults.js"></script>
+<script>
+    // When click a popover, scrolls back to top of the page.
+    // We can solve that by preventing the default action of the anchor element.
+    $('a#popover1').on('click', function (e) {
+        e.preventDefault();
+        return true;
+    });
+
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    /*$(function () {
+        setTimeout(function () {
+            $('#pageInfo').fadeOut(1000);
+        }, 5000)
+    })*/
+
+    /*function activeOptions(answer, quantity) {
+        var order = answer.charCodeAt(0) - 65;
+        var arr = new Array(quantity);
+        if (quantity === 4) {
+            for (var i = 0; i < quantity; i++) {
+                arr[i] = i === order? true : false;
+            }
+        } else {
+            arr[0] = ('Y'.charCodeAt(0) - 89) === (order - 24)? true : false;
+            arr[1] = !arr[0];
+        }
+        return arr;
+    };*/
+</script>
+<script>
+    /*$(document).ready(setTimeout(function () {
+        $('[id^=showSelect]').each(function () {
+            // alert(this.id);
+            $('#{0}'.format(this.id)).on('DOMSubtreeModified', hideOption(this.id));
+        });
+    }, 500))*/
+    $(document).ready(setTimeout(function () {
+        $('[id^=showSelect]').each(function () {
+            // alert(this.id);
+            $('#{0}'.format(this.id)).on('DOMSubtreeModified', hideOption(this.id));
+        });
+    }, 2000))
+</script>
+<script src="stringFormat.js"></script>
+<script src="hideOption.js"></script>
+<script src="submitInsertQuestion.js"></script>
+
+<script src="js/jquery.loading.block.js"></script>
+<script>
+    $(function () {
+        $.loadingBlockShow({
+            imgPath: 'image/default.svg',
+            text: 'loading...',
+            style: {
+                position: 'fixed',
+                width: '100%',
+                height: '100%',
+                background: 'rgba(0, 0, 0, .8)',
+                left: 0,
+                top: 0,
+                zIndex: 10000,
+                color: 'white',
+                fontSize: '20px'
+            }
+        });
+        setTimeout($.loadingBlockHide, 3000);
+    });
+</script>
+<script src="js/jquery.gotop.js"></script>
+<script>
+    $('#gotop').gotop({
+        background: '#ffe066',
+        color: 'white',
+        width: '40px',
+        height: '40px',
+        bottom: '20px',
+        right: '20px'
+    });
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+  <title>入馆考试</title>
+  <link rel="stylesheet" href="dist/css/bootstrap.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" href="image/icon.png" type="image/x-icon">
+  <script src="dist/js/angular.min.js"></script>
+  <script src="dist/js/jquery-3.2.1.min.js"></script>
+  <script src="dist/js/bootstrap.min.js"></script>
+
+  <style>
+    html, body {
+      height: 100%;
+    }
+
+    /*Remove the navbar's default margin-bottom and rounded borders*/
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+
+    .bg-gray {
+      background-color: #f6f6f6;
+    }
+
+    .modal-content {
+      /*background-image: linear-gradient(120deg, #67B8DE 0%, #9682bc 100%)*/
+      background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%);
+    }
+
+    .btn {
+      text-align: left;
+      white-space: normal !important;
+    }
+
+    footer {
+      /*background-color: #57554c;*/
+      background: #788ebc;
+      background: -webkit-linear-gradient(to right, #67B8DE, #9682bc);
+      background:    -moz-linear-gradient(to right, #67B8DE, #9682bc);
+      background:         linear-gradient(to right, #67B8DE, #9682bc);
+      color: #f5f5f5;
+      padding: 32px 16px 14px 16px;
+      font: 300 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    footer a:hover {
+      color: #777;
+      text-decoration: none;
+    }
+    /* make loading animation in the center of screen */
+    #loading {
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .dropdown-menu li a:hover {
+      background-color: #ffe066;
+    }
+  </style>
+</head>
+<body id="dm_page">
+<div class="modal fade" id="dmModal" role="dialog" style="margin-top: 50px">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header" style="text-align: center">
+        <img src="image/user.png" style="width: 40%">
+      </div>
+      <div class="modal-body">
+        <div class="input-group" style="margin: 12px">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-user"></i>
+          </span>
+          <input type="text" class="form-control" id="username" placeholder="学号">
+        </div>
+        <div class="input-group" style="margin: 12px">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-lock"></i>
+          </span>
+          <input type="password" class="form-control" id="password" placeholder="同校园卡密码">
+        </div>
+        <!--<form style="margin: 12px">
+          <label class="checkbox-inline">
+            <label><input type="checkbox"> 显示密码</label>
+          </label>
+          <label class="checkbox-inline">
+            <label><input type="checkbox"> 记住密码</label>
+          </label>
+        </form>-->
+        <div class="text-center" style="margin-top: 37.5px">
+          <p>
+            <button id="uSubmit" class="btn btn-info" style="width: 30%; text-align: center; margin-right: 8px">登录</button>
+            <script src="js/login.js"></script>
+            <button id="uCancle" class="btn" style="width: 30%; text-align: center; margin-left: 8px; background-color: #aad8b0; color: white" data-dismiss="modal">取消</button>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#dmNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#" style="padding: 5px 10px">
+        <img src="image/logo.png" style="width: 40px">
+      </a>
+    </div>
+    <div class="collapse navbar-collapse" id="dmNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Projects
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://m.5read.com/1948">移动图书馆</a></li>
+            <li><a href="http://210.35.95.114/mobile_library/index.html">app使用指南</a></li>
+            <li><a href="http://mybook.shiep.edu.cn/">借阅查询</a></li>
+          </ul>
+        </li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li id="dmLogin" onclick="legalArea()"><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+
+        <li id="welcome" class="dropdown" style="display: none">
+          <a id="userInfo" class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <span class="glyphicon glyphicon-user"></span> username <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a id="quit" href="#">退出</a></li>
+            <script src="js/quit.js"></script>
+            <li id="state">
+              <a href="#"><mark>状态</mark>: 已通过 <span id="passed" class="glyphicon glyphicon-ok" style="color: #ffe066"></span></a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <script src="js/ipConstraint.js"></script>
+    </div>
+  </div>
+</nav>
+
+<div class="jumbotron text-center">
+  <h1 style="margin: 30px 0px">新生入馆考试</h1>
+  <p style="padding: 0 32px; text-align: left">为了使新生尽快熟悉图书馆，更好地利用图书馆。图书馆采用网上<mark>在线自学</mark>和<mark>在线考试</mark>的方式开展新生入馆教育，成绩<code>合格</code>后方可开通校园卡的图书借阅权限。</p>
+</div>
+
+<div class="container-fluid text-center">
+  <div class="row">
+    <div class="col-sm-2" style="text-align: left">
+      <div id="notifySuccess" class="alert alert-success alert-dismissable" style="display: none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+        登录成功!
+      </div>
+      <div id="notifyStore" class="alert alert-info alert-dismissable" style="display: none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+        已登录.
+      </div>
+    </div>
+    <!--test contents-->
+    <div class="col-sm-8 text-left">
+      <div class="panel panel-warning">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" href="#collapseOne">注意事项</a>
+          </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <i>未登录</i> 用户答题不计分。
+          </div>
+        </div>
+      </div>
+
+      <div class="well">单选题（1分/题，共30题）</div>
+
+      <div ng-app="dmApp" ng-controller="questionsCtrl" class="panel-group">
+        <div class="panel panel-info" id="{{x.order}}" ng-repeat="x in questions">
+          <!--<div class="panel-heading">1.图书状态显示“已借出”时，可以&nbsp;<span style="border-bottom: 1px solid cornflowerblue">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;来确保优先借阅。</div>-->
+          <div class="panel-heading">{{x.order.slice(6, x.order.length)}}.{{x.header}}</div>
+          <div class="panel-body">
+            <div data-toggle="buttons">
+              <span class="btn btn-default btn-block" id="{{x.order}}-A" onclick="chameleon(this.id)">
+                <input type="radio" value="A">A {{x.opts.split('|')[0]}}
+              </span>
+              <span class="btn btn-default btn-block" id="{{x.order}}-B" onclick="chameleon(this.id)">
+                <input type="radio" value="B">B {{x.opts.split('|')[1]}}
+              </span>
+              <span class="btn btn-default btn-block" id="{{x.order}}-C" onclick="chameleon(this.id)">
+                <input type="radio" value="C">C {{x.opts.split('|')[2]}}
+              </span>
+              <span class="btn btn-default btn-block" id="{{x.order}}-D" onclick="chameleon(this.id)">
+                <input type="radio" value="D">D {{x.opts.split('|')[3]}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div><!--panel group end-->
+      <script>
+        var goodOnes = [];
+        var app = angular.module('dmApp', []);
+        app.controller('questionsCtrl', function ($scope, $http) {
+            $http.get("getQuestions.php").then(function (response) {
+                $scope.questions = response.data;
+                response.data.forEach(function (p1, p2, p3) {
+                    goodOnes['select' + (p2 + 1)] = p1['answer'];
+                    goodOnes.length ++;
+                })
+            });
+        });
+      </script>
+      <div class="text-center">
+        <button id="submit" class="btn btn-info btn-lg"
+                style="text-align: center; margin-bottom: 32px; width: 30%" onclick="submit()">提交</button>
+      </div>
+    </div><!--col-sm-8 end-->
+
+    <div class="col-sm-2">
+      <div id="gotop"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer id="contact" class="text-center">
+  <p>
+    &copy; 2016<script>
+      new Date().getFullYear() > 2016 && document.write('-' + new Date().getFullYear());
+  </script>
+    Shanghai University of Electric Power Library, all rights reserved.
+  </p>
+  <p>Phone: +021 68029245</p>
+  <p>Email: ourlib@163.com</p>
+</footer>
+
+<script>
+  $(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+  })
+</script>
+
+<script>
+  $(document).ready(function () {
+    $("#dmLogin").click(function () {
+      $("#dmModal").modal();
+    })
+  })
+
+  var ones = [];  // send ones as json to submit.php
+  function chameleon(sel) {
+    var x = document.getElementById(sel);
+    if (!ones[sel.slice(0, -2)]) {
+      if (sel.indexOf('select') !== -1) {
+        x.parentNode.parentNode.parentNode.classList.remove('panel-info');
+      } else {
+        x.parentNode.parentNode.parentNode.classList.remove('panel-warning');
+      }
+      x.parentNode.parentNode.parentNode.classList.add('panel-primary');
+    }
+    /*http://stackoverflow.com/questions/9618504/get-radio-button-value-with-javascript
+    * Because state lag, radio check in this position is wrong.*/
+    // ones[sel] = $("input[name = {0}]:checked".format([sel])).val();
+    ones[sel.slice(0, -2)] = sel.substr(-1, 1);
+    ones.length ++;  // to confirm if a user selects all questions.
+  }
+</script>
+<script src="hideOption.js"></script>
+<!-- the executing sequence of javascript -->
+<script src="js/submitExaminationPaper.js"></script>
+<script type="text/javascript" src="stringFormat.js"></script>
+
+<script src="js/jquery.loading.block.js"></script>
+<script>
+  $(function () {
+      $.loadingBlockShow({
+          imgPath: 'image/default.svg',
+          text: 'loading...',
+          style: {
+              position: 'fixed',
+              width: '100%',
+              height: '100%',
+              background: 'rgba(0, 0, 0, .8)',
+              left: 0,
+              top: 0,
+              zIndex: 10000,
+              color: 'white',
+              fontSize: '20px'
+          }
+      });
+      setTimeout($.loadingBlockHide, 3000);
+  });
+</script>
+<script>
+    $(document).ready(setTimeout(function () {
+        $('[id*=-]').each(function () {
+            $('#{0}'.format(this.id)).on('DOMSubtreeModified', hideOption(this.id));
+        });
+    }, 2000));
+    /*$(document).ready(setTimeout(function () {
+     while (document.getElementById("select30")) {
+     $('[id*=-]').each(function () {
+     $('#{0}'.format(this.id)).on('DOMSubtreeModified', hideOption(this.id));
+     });
+     }  // hide redundant elements after panel checking, this could crash the page
+     }), 2000);*/
+</script>
+<script src="js/jquery.gotop.js"></script>
+<script>
+  $('#gotop').gotop({
+      background: '#ffe066',
+      color: 'white',
+      width: '40px',
+      height: '40px',
+      bottom: '20px',
+      right: '20px'
+  });
+</script>
+<!-- acquire public IP address:
+     The result returns a call to a function named "getIP" with the JSON data as a parameter,
+     make sure that the function exists on the client. -->
+<script src="js/initialization.js"></script>
+<!-- Requesting a file from another domain can cause problems, duo to cross-domain policy.
+     Requesting an external script from another domain does not have this problem. -->
+<script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
+<script src="php/getLocalIPAddress.php"></script>
+
+<!-- relating to cookie -->
+<script src="js/cookie.js"></script>
+</body>
+</html>
